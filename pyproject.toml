@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "poetry-bump"
+version = "0.1.0"
+description = ""
+authors = ["Daniel Fajt <daniel29se@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "*", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+poetry = "^1.2.2"
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.10.1"
+mypy = "^0.982"
+black = "^22.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.plugins."poetry.application.plugin"]
+poetry-bump = "plugin:PushToPyprojectPy"
