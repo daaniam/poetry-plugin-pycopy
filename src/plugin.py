@@ -1,4 +1,3 @@
-from traceback import print_tb
 from cleo.events.console_events import TERMINATE
 from cleo.events.console_command_event import ConsoleCommandEvent
 from cleo.events.event_dispatcher import EventDispatcher
@@ -17,45 +16,48 @@ def create_line(k, v):
 
 class PushToPyprojectPy(ApplicationPlugin):
     def activate(self, application: Application):
-        application.event_dispatcher.add_listener(TERMINATE, self.push)
+        application.event_dispatcher.add_listener(TERMINATE, self.copy_pyproject_fields)
 
-    def push(
+    def copy_pyproject_fields(
         self,
         event: ConsoleCommandEvent,
         event_name: str,
         dispatcher: EventDispatcher,
     ):
+
+        # pyproject.toml file Path
         project_root = Path(__name__).parent.absolute()
         toml_file = Path.joinpath(project_root, "pyproject.toml")
         if not toml_file.exists():
-            print("No toml file")
+            return
 
+        # Read file
         toml_data = PyProjectTOML(path=toml_file).file.read()
-        # poetry_tool = toml_data["tool"]["Poetry"]
 
+        # [tool.poetry] fields
         tool_poetry = toml_data["tool"]["poetry"]
-        tool_poetry_name = toml_data["tool"]["poetry"]["name"]
 
-        tool_poetry_bump = toml_data["tool"]["poetry-bump"]
-        bump_keys = list(toml_data["tool"]["poetry-bump"]["keys"])
-        bump_dest_dir = toml_data["tool"]["poetry-bump"]["dest_dir"]
-        bump_dest_file = toml_data["tool"]["poetry-bump"]["dest_file"]
+        # [tool.poetry-bump] fields - Plugin config
+        try:
+            copy_keys: list = list(toml_data["tool"]["poetry-bump"]["keys"])
+            dest_dir: str = toml_data["tool"]["poetry-bump"]["dest_dir"]
+            dest_file: str = toml_data["tool"]["poetry-bump"]["dest_file"]
+        except KeyError:
+            raise
 
-        print("bump_keys", bump_keys)
-        print("bump_dest_dir", bump_dest_dir)
-        print("bump_dest_file", bump_dest_file)
+        print("bump_keys", copy_keys)
+        print("bump_dest_dir", dest_dir)
+        print("bump_dest_file", dest_file)
 
-        pyproject_py = Path.joinpath(project_root, bump_dest_dir).joinpath(
-            bump_dest_file
-        )
-        print("pyproject_py", pyproject_py)
+        # Destination file path
+        pyproject_py = Path.joinpath(project_root, dest_dir).joinpath(dest_file)
 
-        parsed_data = {k: tool_poetry[k] for k in bump_keys if k in tool_poetry}
+        # Find value in [tool.poetry] for every key in 'copy_keys'
+        parsed_data = {k: tool_poetry[k] for k in copy_keys if k in tool_poetry}
 
-        print("parsed_data", parsed_data)
-
+        # Create line for every record in parsed_data
         lines = [create_line(k, v) for k, v in parsed_data.items()]
-        print("lines", lines)
 
+        # Write lines to destination file
         with open(pyproject_py, "w+", encoding="utf-8") as f:
             f.writelines(lines)
