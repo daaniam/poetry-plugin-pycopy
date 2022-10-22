@@ -4,7 +4,7 @@ from cleo.events.console_events import TERMINATE
 from cleo.events.event_dispatcher import EventDispatcher
 from poetry.plugins.application_plugin import ApplicationPlugin
 
-from .pycopy import pycopy
+from pycopy import pycopy
 
 
 class PyCopyCommand(Command):
@@ -21,7 +21,7 @@ def factory():
     return PyCopyCommand()
 
 
-class PoetryPycopyPlugin(ApplicationPlugin):
+class PoetryPluginPycopy(ApplicationPlugin):
     """Plugin entrypoint class.
 
     Fire the plugin with the command "poetry pycopy" or "poetry version ..."

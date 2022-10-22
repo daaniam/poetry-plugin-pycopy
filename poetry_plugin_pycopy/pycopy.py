@@ -4,7 +4,7 @@ from pathlib import Path
 from poetry.core.pyproject.toml import PyProjectTOML
 from tomlkit.toml_document import TOMLDocument
 
-from .models import PluginConfig
+from models import PluginConfig
 
 PLUGIN_NAME = "poetry-pycopy-plugin"
 PROJECT_ROOT = Path(__name__).parent.absolute()
@@ -48,7 +48,7 @@ def read_toml(toml_path: Path) -> TOMLDocument:
     return PyProjectTOML(path=toml_path).data
 
 
-def plugin_config(toml_data: TOMLDocument) -> PluginConfig:
+def read_config(toml_data: TOMLDocument) -> PluginConfig:
     """Read [tool.poetry-pycopy-plugin] fields
 
     Args:
@@ -101,7 +101,7 @@ def pycopy():
     print("\nRunning Poetry PyCopy Plugin:")
 
     toml_data: TOMLDocument = read_toml(toml_path=PROJECT_TOML_FILE)
-    plugin_config: PluginConfig = plugin_config(toml_data=toml_data)
+    plugin_config: PluginConfig = read_config(toml_data=toml_data)
 
     # Destination file path
     pyproject_py = Path.joinpath(PROJECT_ROOT, plugin_config.dest_dir).joinpath(plugin_config.dest_file)

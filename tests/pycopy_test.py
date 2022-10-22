@@ -6,7 +6,7 @@ from tomlkit.toml_document import TOMLDocument
 
 from poetry_plugin_pycopy.pycopy import (
     PoetryPycopyPluginError,
-    plugin_config,
+    read_config,
     read_toml,
 )
 
@@ -20,21 +20,34 @@ from poetry_plugin_pycopy.pycopy import (
 #     return PyProjectTOML(path=valid_config_path).file.read()
 
 
-def test_read_config_file(valid_toml_path: Path):
+@pytest.mark.parametrize(
+    'file_path, expected, is_error',
+    [("valid_config_path", TOMLDocument, False), ("non_existing_path", PoetryPycopyPluginError, True)],
+)
+def test_read_config_file(file_path, expected, is_error, request):
     """Should read toml file"""
-    result = read_toml(toml_path=valid_toml_path)
-    assert isinstance(result, TOMLDocument)
-    assert "version" in result["tool"]["poetry"]
+
+    file_path = request.getfixturevalue(file_path)
+
+    if is_error:
+        with pytest.raises(PoetryPycopyPluginError, match=str(file_path)):
+            read_toml(toml_path=file_path)
+    else:
+
+        result = read_toml(toml_path=file_path)
+        assert isinstance(result, expected)
 
 
-def test_config_file_not_found(invalid_toml_path: Path):
-    """Should raise PoetryPycopyPluginError"""
+def test_parse_fields()
 
-    with pytest.raises(PoetryPycopyPluginError, match=str(invalid_toml_path)):
-        read_toml(toml_path=invalid_toml_path)
+# def test_config_file_not_found(non_existing_path: Path):
+#     """Should raise PoetryPycopyPluginError"""
+
+#     with pytest.raises(PoetryPycopyPluginError, match=str(non_existing_path)):
+#         read_toml(toml_path=non_existing_path)
 
 
-def test_plugin_config(toml_data: TOMLDocument):
-    """Should read plugin config section from toml file"""
+# def test_plugin_config(toml_data: TOMLDocument):
+#     """Should read plugin config section from toml file"""
 
-    plugin_config(toml_data=toml_data)
+#     plugin_config(toml_data=toml_data)
