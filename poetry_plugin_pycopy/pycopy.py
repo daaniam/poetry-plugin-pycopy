@@ -6,12 +6,12 @@ from tomlkit.toml_document import TOMLDocument
 
 from models import PluginConfig
 
-PLUGIN_NAME = "poetry-pycopy-plugin"
+PLUGIN_NAME = "poetry-plugin-pycopy"
 PROJECT_ROOT = Path(__name__).parent.absolute()
 PROJECT_TOML_FILE = Path.joinpath(PROJECT_ROOT, "pyproject.toml")
 
 
-class PoetryPycopyPluginError(Exception):
+class PoetryPluginPyCopyError(Exception):
     """PoetryPycopyPluginError"""
 
 
@@ -42,7 +42,7 @@ def read_toml(toml_path: Path) -> TOMLDocument:
 
     # File not exists
     if not toml_path.exists():
-        raise PoetryPycopyPluginError(f"File not found {toml_path}")
+        raise PoetryPluginPyCopyError(f"File not found {toml_path}")
 
     # Read file and return TOMLDocument object
     return PyProjectTOML(path=toml_path).data
@@ -62,6 +62,13 @@ def read_config(toml_data: TOMLDocument) -> PluginConfig:
 
     """
 
+    # Verify that plugin config section exists in pyproject.toml
+    try:
+        toml_data["tool"][PLUGIN_NAME]
+    except KeyError:
+        raise PoetryPluginPyCopyError("Missing configuration in pyproject.toml")
+
+    #
     try:
         return PluginConfig(
             keys=list(toml_data["tool"][PLUGIN_NAME]["keys"]),
@@ -70,10 +77,10 @@ def read_config(toml_data: TOMLDocument) -> PluginConfig:
         )
 
     except KeyError as ex:
-        raise PoetryPycopyPluginError(ex)
+        raise PoetryPluginPyCopyError(ex)
 
 
-def parse_fields(plugin_config: PluginConfig, toml_data: PyProjectTOML) -> dict:
+def parse_fields(plugin_config: PluginConfig, toml_data: TOMLDocument) -> dict:
     """Parse requested keys from plugin config with keys from tool.poetry section.
     Only keys which exists in tool.poetry section will be returned.
 
@@ -104,8 +111,8 @@ def pycopy():
     plugin_config: PluginConfig = read_config(toml_data=toml_data)
 
     # Destination file path
-    pyproject_py = Path.joinpath(PROJECT_ROOT, plugin_config.dest_dir).joinpath(plugin_config.dest_file)
-    print("Destination file:", str(pyproject_py))
+    dest_file_path = Path.joinpath(PROJECT_ROOT, plugin_config.dest_dir).joinpath(plugin_config.dest_file)
+    print("Destination file:", str(dest_file_path))
 
     # Parse
     parsed_data = parse_fields(plugin_config, toml_data)
@@ -115,7 +122,7 @@ def pycopy():
     lines = [create_line(k, v) for k, v in parsed_data.items()]
 
     # Write lines to destination file
-    with open(pyproject_py, "w+", encoding="utf-8") as f:
+    with open(dest_file_path, "w+", encoding="utf-8") as f:
         f.writelines(lines)
 
     print("\n")
