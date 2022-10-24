@@ -3,7 +3,7 @@ name = "poetry-plugin-pycopy"
 version = "1.0.1"
 description = "Copy fields from pyproject.toml to source directory"
 authors = ["Daniel Fajt <daniel29se@gmail.com>"]
-license = "MIT"
+license = "unlicense.org"
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
