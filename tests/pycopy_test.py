@@ -54,7 +54,3 @@ def test_parse_fields(plugin_config, valid_toml_data):
     assert isinstance(parsed, dict)
     assert "name" and "version" and "description" in parsed.keys()
     assert "package_name" and "0.1.1" and "Some description" in parsed.values()
-
-
-def test_pycopy():
-    

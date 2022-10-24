@@ -1,10 +1,13 @@
 [tool.poetry]
 name = "poetry-plugin-pycopy"
-version = "1.0.2"
+version = "1.0.4"
 description = "Copy fields from pyproject.toml to source directory"
 authors = ["Daniel Fajt <daniel29se@gmail.com>"]
 license = "unlicense.org"
 readme = "README.md"
+packages = [
+    { include = "poetry_plugin_pycopy" }
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",

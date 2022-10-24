@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from models import PluginConfig
+from .models import PluginConfig
 from poetry.core.pyproject.toml import PyProjectTOML
 from tomlkit.toml_document import TOMLDocument
 
