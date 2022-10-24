@@ -3,7 +3,6 @@ from cleo.events.console_command_event import ConsoleCommandEvent
 from cleo.events.console_events import TERMINATE
 from cleo.events.event_dispatcher import EventDispatcher
 from poetry.plugins.application_plugin import ApplicationPlugin
-
 from pycopy import pycopy
 
 

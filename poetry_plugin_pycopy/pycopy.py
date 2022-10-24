@@ -1,10 +1,9 @@
 import json
 from pathlib import Path
 
+from models import PluginConfig
 from poetry.core.pyproject.toml import PyProjectTOML
 from tomlkit.toml_document import TOMLDocument
-
-from models import PluginConfig
 
 PLUGIN_NAME = "poetry-plugin-pycopy"
 PROJECT_ROOT = Path(__name__).parent.absolute()
@@ -68,7 +67,7 @@ def read_config(toml_data: TOMLDocument) -> PluginConfig:
     except KeyError:
         raise PoetryPluginPyCopyError("Missing configuration in pyproject.toml")
 
-    #
+    # Read config from pyproject.toml
     try:
         return PluginConfig(
             keys=list(toml_data["tool"][PLUGIN_NAME]["keys"]),
@@ -99,6 +98,18 @@ def parse_fields(plugin_config: PluginConfig, toml_data: TOMLDocument) -> dict:
     return {k: tool_poetry[k] for k in plugin_config.keys if k in tool_poetry}
 
 
+def output_file_path(plugin_config: PluginConfig) -> Path:
+    """Create path for output file from project root directory.
+
+    Args:
+        plugin_config (PluginConfig): Plugin configuration
+
+    Returns:
+        Path: Path to output file
+    """
+    return Path.joinpath(PROJECT_ROOT, plugin_config.dest_dir).joinpath(plugin_config.dest_file)
+
+
 def pycopy():
     """Read pyproject.toml file from the project root, parse required fields and
     write them to the destination file.
@@ -111,12 +122,12 @@ def pycopy():
     plugin_config: PluginConfig = read_config(toml_data=toml_data)
 
     # Destination file path
-    dest_file_path = Path.joinpath(PROJECT_ROOT, plugin_config.dest_dir).joinpath(plugin_config.dest_file)
+    dest_file_path = output_file_path(plugin_config)
     print("Destination file:", str(dest_file_path))
 
     # Parse
-    parsed_data = parse_fields(plugin_config, toml_data)
-    print(json.dumps(parsed_data, indent=2, default=str))
+    parsed_data: dict = parse_fields(plugin_config, toml_data)
+    print('\n', json.dumps(parsed_data, indent=2, default=str))
 
     # Create output-line for every record in parsed_data
     lines = [create_line(k, v) for k, v in parsed_data.items()]

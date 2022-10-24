@@ -1,13 +1,22 @@
 [tool.poetry]
 name = "poetry-plugin-pycopy"
-version = "0.1.1"
+version = "1.0.0"
 description = "Copy fields from pyproject.toml to source directory"
 authors = ["Daniel Fajt <daniel29se@gmail.com>"]
 license = "MIT"
-packages = [{ include = "*", from = "poetry_plugin_pycopy" }]
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/danielfajt/poetry-plugin-pycopy"
+"Bug Tracker" = "https://github.com/danielfajt/poetry-plugin-pycopy/issues"
 
 [tool.poetry.dependencies]
-python = ">=3.10"
+python = "^3.10"
 poetry = "^1.2.2"
 
 [tool.poetry.group.dev.dependencies]
@@ -22,6 +31,7 @@ pytest = "^7.1.3"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
 
 [tool.poetry.plugins."poetry.application.plugin"]
 pycopy = "plugin:PoetryPluginPycopy"
@@ -38,4 +48,3 @@ line-length = 120
 profile = "black"
 skip_glob = [".venv", "venv", "docs/*"]
 skip = [".md", ".json"]
-
