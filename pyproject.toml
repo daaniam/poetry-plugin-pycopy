@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poetry-plugin-pycopy"
-version = "1.0.5"
+version = "1.0.6"
 description = "Copy fields from pyproject.toml to source directory"
 authors = ["Daniel Fajt <daniel29se@gmail.com>"]
 license = "unlicense.org"
@@ -31,6 +31,7 @@ pytest = "^7.1.3"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
 
 
 
