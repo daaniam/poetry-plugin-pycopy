@@ -46,10 +46,11 @@ Plugin also runs with `$poetry version` command automatically. So when you use v
 The `dest_file` is set to `__init__.py`. Thus the plugin will create or replace that file with current values for a given `keys`. For example:
 
 ```
-__name = "poetry-plugin-pycopy"
-__version = "1.0.0"
-__description = "Copy fields from pyproject.toml to source directory"
-
+pyproject_toml = {
+    "name": "test-venv-1",
+    "version": "0.1.0",
+    "description": "dsa",
+}
 ```
 
 -> https://unlicense.org/

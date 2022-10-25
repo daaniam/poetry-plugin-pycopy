@@ -1,9 +1,10 @@
 import json
 from pathlib import Path
 
-from .models import PluginConfig
 from poetry.core.pyproject.toml import PyProjectTOML
 from tomlkit.toml_document import TOMLDocument
+
+from .models import PluginConfig
 
 PLUGIN_NAME = "poetry-plugin-pycopy"
 PROJECT_ROOT = Path(__name__).parent.absolute()
@@ -22,7 +23,7 @@ def create_line(k, v):
         __name = "My great app"
 
     """
-    return f'__{k} = "{v}"\n'
+    return f'    "{k}": "{v}",\n'
 
 
 def read_toml(toml_path: Path) -> TOMLDocument:
@@ -130,10 +131,11 @@ def pycopy():
     print('\n', json.dumps(parsed_data, indent=2, default=str))
 
     # Create output-line for every record in parsed_data
-    lines = [create_line(k, v) for k, v in parsed_data.items()]
+    dict_items = [create_line(k, v) for k, v in parsed_data.items()]
+    final_dict = ['pyproject_toml = {\n', *dict_items, '}\n']
 
     # Write lines to destination file
     with open(dest_file_path, "w+", encoding="utf-8") as f:
-        f.writelines(lines)
+        f.writelines(final_dict)
 
     print("\n")
